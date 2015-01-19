@@ -8,9 +8,9 @@ import java.util.List;
 
 class RandomPlayer {
 
-	String playerName="aa";
+	String playerName="bb";
 	BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
-	boolean first_move=false;
+	boolean first_move=true;
 	
 	public void processInput() throws IOException{	
 	
@@ -23,7 +23,7 @@ class RandomPlayer {
 			System.out.println("game over!!!");
 		}
 		else if(ls.size()==5){          //ls contains game info
-			System.out.println("0 1");  //first move
+			System.out.println("1 1");  //first move
 		}
 		else if(ls.size()==4){		//player1: aa player2: bb
 			//TODO combine this information with game information to decide who is the first player
@@ -42,6 +42,14 @@ class RandomPlayer {
 		rp.processInput();
 		rp.processInput();
 		rp.processInput();
+		rp.processInput();
+		rp.processInput();
+		rp.processInput();
+		rp.processInput();
+		rp.processInput();
+		rp.processInput();
+		rp.processInput();
+		
 		
 	}
 
