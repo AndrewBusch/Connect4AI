@@ -42,6 +42,7 @@ public class RandomPlayer {
 		rp.processInput();
 		rp.processInput();
 		rp.processInput();
+		Referee();
 	}
 
 }
