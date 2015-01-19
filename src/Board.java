@@ -1,3 +1,5 @@
+import java.util.Arrays;
+
 /**
  * This code is created for cs 4341 AI 2013a at WPI. All rights are reserved. 
  */
@@ -34,6 +36,18 @@ public class Board {
 		this.N=N;
 	 }
 	 
+	 Board( Board another) {
+		this.width = another.width;
+		this.height = another.height;
+		board = new short[height][width];
+		numOfDiscsInColumn=new int[this.width];
+		for(int i = 0; i < height; i++){
+			this.board[i] = Arrays.copyOf(another.board[i], another.board[i].length);
+		}
+		this.numOfDiscsInColumn = Arrays.copyOf(another.numOfDiscsInColumn, another.numOfDiscsInColumn.length);
+		this.N = another.N;
+	 }
+	 
 	 public void printBoard(){
 		 System.out.println("Board: ");
 		 for(int i=0;i<height;i++){
@@ -42,6 +56,18 @@ public class Board {
 				}
 				System.out.println();
 		 }
+	 }
+	 
+	 public int eval() {
+		int sum = 0;
+		int score = isConnectN();
+		if( score == 1 ) {			// -1 no winner, 0 tie, 1 win, 2 loss
+			sum = 100;
+		} else if( score == 2) {
+			sum = -100;
+		} else if( score == -1) {
+	 	}
+		return sum;
 	 }
 	 
 	 public boolean canRemoveADiscFromBottom(int col, int currentPlayer){
