@@ -6,7 +6,7 @@ import java.util.Iterator;
 import java.util.List;
 
 
-public class RandomPlayer {
+class RandomPlayer {
 
 	String playerName="aa";
 	BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
@@ -23,7 +23,7 @@ public class RandomPlayer {
 			System.out.println("game over!!!");
 		}
 		else if(ls.size()==5){          //ls contains game info
-			System.out.println("1 1");  //first move
+			System.out.println("0 1");  //first move
 		}
 		else if(ls.size()==4){		//player1: aa player2: bb
 			//TODO combine this information with game information to decide who is the first player
@@ -42,7 +42,7 @@ public class RandomPlayer {
 		rp.processInput();
 		rp.processInput();
 		rp.processInput();
-		Referee();
+		
 	}
 
 }
