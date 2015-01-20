@@ -47,14 +47,16 @@ public class PlayerAI {
 	
 	int traverse(Board currentBoard) {
 		int score = Integer.MIN_VALUE;
-		int index = -1;
+		int index = 4;
 		for(int i = 0; i < board.width; i++) {
-			Board nextMove = new Board(currentBoard);
-			nextMove.dropADiscFromTop(i, 1);
-			int value = scoreOfMove(nextMove, 1);
-			if( score < value) {
-				score = value;
-				index = i;
+			if( board.canDropADiscFromTop(i, 1)){
+				Board nextMove = new Board(currentBoard);
+				nextMove.dropADiscFromTop(i, 1);
+				int value = scoreOfMove(nextMove, 1);
+				if( score < value) {
+					score = value;
+					index = i;
+				}
 			}
 		}
 		return index;
@@ -75,7 +77,7 @@ public class PlayerAI {
 			}
 			return score;
 		} else if(currentDepth%2 == 1) {		// MIN
-			int score = Integer.MAX_VALUE;
+			/*int score = Integer.MAX_VALUE;
 			for(int i = 0; i < board.width; i++) {
 				Board nextMove = new Board(currentBoard);
 				nextMove.dropADiscFromTop(i, 2);
@@ -83,8 +85,8 @@ public class PlayerAI {
 				if( score > value) {
 					score = value;
 				}
-			}
-			return score;
+			}*/
+			return 1;
 		}
 		return -1;
 	}
@@ -98,6 +100,8 @@ public class PlayerAI {
 	}
 	
 	public static void main(String[] args) throws IOException {
+		Log log = new Log();
+		log.writeLog("Intial Log Test----------------");
 		PlayerAI ai=new PlayerAI();
 		System.out.println(ai.playerName);
 			ai.processInput();
@@ -112,7 +116,5 @@ public class PlayerAI {
 			ai.processInput();
 			ai.processInput();
 			ai.processInput();
-		
 	}
-	
 }
