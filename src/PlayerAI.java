@@ -11,6 +11,7 @@ public class PlayerAI {
 	Board board;
 	boolean isFirstPlayer;
 	final int MAX_DEPTH = 2;
+	static Log log;
 	
 	public void processInput() throws IOException{	
 		
@@ -21,11 +22,13 @@ public class PlayerAI {
 			updateBoard(ls.get(0), ls.get(1), 2);
 			int moveColumn = traverse(board);
 			updateBoard(Integer.toString(moveColumn), "1", 1);
+			log.writeLog(moveColumn + " 1");
 			System.out.println(moveColumn + " 1");
 			//updateBoard("3", "1", 1);
 		}
 		else if(ls.size()==1){							//if game over?
-			System.out.println("game over!!!");
+			log.writeLog("game over");
+			//System.out.println("4 1");
 		}
 		else if(ls.size()==5){          				//ls contains game info
 			board = new Board(Integer.parseInt(ls.get(0)), Integer.parseInt(ls.get(1)), Integer.parseInt(ls.get(2)));
@@ -41,8 +44,10 @@ public class PlayerAI {
 				isFirstPlayer = false;
 			}
 		}
-		else
+		else {
+			log.writeLog("not what I want");
 			System.out.println("not what I want");
+		}
 	}
 	
 	int traverse(Board currentBoard) {
@@ -100,7 +105,7 @@ public class PlayerAI {
 	}
 	
 	public static void main(String[] args) throws IOException {
-		Log log = new Log();
+		log = new Log();
 		log.writeLog("Intial Log Test----------------");
 		PlayerAI ai=new PlayerAI();
 		System.out.println(ai.playerName);

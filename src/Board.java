@@ -21,6 +21,7 @@ public class Board {
 	int PLAYER2=2;
 	int NOCONNECTION=-1;
 	int TIE=0;
+	Log log = new Log();
 	
 	 Board(int height, int width, int N){
 		this.width=width;
@@ -49,12 +50,12 @@ public class Board {
 	 }
 	 
 	 public void printBoard(){
-		 System.out.println("Board: ");
+		 log.writeLog("Board: ");
 		 for(int i=0;i<height;i++){
 				for(int j=0;j<width;j++){
 					System.out.print(board[i][j]+" ");
 				}
-				System.out.println();
+				log.writeLog("");
 		 }
 	 }
 	 
@@ -72,11 +73,11 @@ public class Board {
 	 
 	 public boolean canRemoveADiscFromBottom(int col, int currentPlayer){
 		 if(col<0 || col>=this.width) {
-			 System.out.println("Illegal column!");
+			 log.writeLog("Illegal column!");
 			 return false;
 			 }
 		 else if(board[height-1][col]!=currentPlayer){
-			 System.out.println("You don't have a checker in column "+col+" to pop out!");
+			 log.writeLog("You don't have a checker in column "+col+" to pop out!");
 			 return false;
 		 }
 		 else 
@@ -97,11 +98,11 @@ public class Board {
 	 
 	 public boolean canDropADiscFromTop(int col, int currentPlayer){
 		 if(col<0 || col>=this.width) {
-			 System.out.println("Illegal column!");
+			 log.writeLog("Illegal column!");
 			 return false;
 			 }
 		 else if(this.numOfDiscsInColumn[col]==this.height){
-			 System.out.println("Column is already full. Cannot drop more disc in it.");
+			 log.writeLog("Column is already full. Cannot drop more disc in it.");
 			 return false;
 		 }
 		 else
@@ -237,7 +238,7 @@ public class Board {
 			 y=-x+k;
 			 
 			while(x>=0  && y<height){
-				// System.out.println("k: "+k+", x: "+x+", y: "+y);
+				// log.writeLog("k: "+k+", x: "+x+", y: "+y);
 				if(board[height-1-y][x]==PLAYER1){
 					max1++;
 					max2=0;
@@ -277,7 +278,7 @@ public class Board {
 	   boolean player2_win=false;
 	   int upper_bound=width-1-(N-1);
 	   int  lower_bound=-(height-1-(N-1));
-	  // System.out.println("lower: "+lower_bound+", upper_bound: "+upper_bound);
+	  // log.writeLog("lower: "+lower_bound+", upper_bound: "+upper_bound);
 		 for(int k=lower_bound;k<=upper_bound;k++){			
 			 max1=0;
 			 max2=0;
@@ -288,7 +289,7 @@ public class Board {
 				 x=0;
 			 y=x-k;
 			while(x>=0 && x<width && y<height){
-				// System.out.println("k: "+k+", x: "+x+", y: "+y);
+				// log.writeLog("k: "+k+", x: "+x+", y: "+y);
 				if(board[height-1-y][x]==PLAYER1){
 					max1++;
 					max2=0;
@@ -352,7 +353,7 @@ public class Board {
 		 dropADiscFromTop(0,1);
 		 printBoard();
 		 int tmp_winner= checkDiagonally1();
-		 System.out.println("Winner: "+tmp_winner);	
+		 log.writeLog("Winner: "+tmp_winner);	
 	 }
 	 /**
 	  * test is connect N diagonally y=-x+k
@@ -364,7 +365,7 @@ public class Board {
 		 printBoard();
 		 int tmp_winner= checkDiagonally1();
 		 //int tmp_winner= isConnectN();
-		 System.out.println("Winner: "+tmp_winner);	
+		 log.writeLog("Winner: "+tmp_winner);	
 	 }
 
 	 /**
@@ -380,7 +381,7 @@ public class Board {
 		 printBoard();
 		 int tmp_winner= checkDiagonally2();
 		 //int tmp_winner= isConnectN();
-		 System.out.println("Winner: "+tmp_winner);	
+		 log.writeLog("Winner: "+tmp_winner);	
 	 }
 	 
 	 
@@ -395,7 +396,7 @@ public class Board {
 		 printBoard();
 		 int tmp_winner= checkDiagonally1();
 		 //int tmp_winner= isConnectN();
-		 System.out.println("Winner: "+tmp_winner);	
+		 log.writeLog("Winner: "+tmp_winner);	
 	 }
 	 /**
 	  * test should ends with tie
@@ -418,7 +419,7 @@ public class Board {
 		 printBoard();
 		// int tmp_winner= this.checkHorizontally();
 		 int tmp_winner= this.checkDiagonally1();
-		 System.out.println("Winner: "+tmp_winner);	
+		 log.writeLog("Winner: "+tmp_winner);	
 	 } 
 	 
 	 public static void main(String [] arg){
