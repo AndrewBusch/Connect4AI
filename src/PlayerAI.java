@@ -69,28 +69,33 @@ public class PlayerAI {
 	
 	int scoreOfMove(Board currentBoard, int currentDepth) {
 		if( currentDepth == MAX_DEPTH || currentBoard.isConnectN() != -1) {
+			log.writeLog("max_depth or connect N " + currentDepth);
 			return currentBoard.eval();
 		} else if(currentDepth%2 == 0) {		// MAX
 			int score = Integer.MIN_VALUE;
 			for(int i = 0; i < board.width; i++) {
-				Board nextMove = new Board(currentBoard);
-				nextMove.dropADiscFromTop(i, 1);
-				int value = scoreOfMove(nextMove, currentDepth++);
-				if( score < value) {
-					score = value;
+				if( board.canDropADiscFromTop(i, 1)){
+					Board nextMove = new Board(currentBoard);
+					nextMove.dropADiscFromTop(i, 1);
+					int value = scoreOfMove(nextMove, currentDepth+1);
+					if( score < value) {
+						score = value;
+					}
 				}
 			}
 			return score;
 		} else if(currentDepth%2 == 1) {		// MIN
-			/*int score = Integer.MAX_VALUE;
+			int score = Integer.MAX_VALUE;
 			for(int i = 0; i < board.width; i++) {
-				Board nextMove = new Board(currentBoard);
-				nextMove.dropADiscFromTop(i, 2);
-				int value = scoreOfMove(nextMove, currentDepth++);
-				if( score > value) {
-					score = value;
+				if( board.canDropADiscFromTop(i, 1)){
+					Board nextMove = new Board(currentBoard);
+					nextMove.dropADiscFromTop(i, 2);
+					int value = scoreOfMove(nextMove, currentDepth+1);
+					if( score > value) {
+						score = value;
+					}
 				}
-			}*/
+			}
 			return 1;
 		}
 		return -1;
