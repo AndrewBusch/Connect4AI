@@ -10,12 +10,12 @@ public class PlayerAI {
 	BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
 	Board board;
 	boolean isFirstPlayer;
-	final int MAX_DEPTH = 2;
+	final int MAX_DEPTH = 8;
 	static Log log;
 	
 	public void processInput() throws IOException{	
-		
-    	String s=input.readLine();	
+		log.writeLog("turn starts");
+    	String s=input.readLine();
 		List<String> ls=Arrays.asList(s.split(" "));
 		
 		if(ls.size()==2){ 								//if opponent just played
@@ -31,7 +31,7 @@ public class PlayerAI {
 			//System.out.println("4 1");
 		}
 		else if(ls.size()==5){          				//ls contains game info
-			board = new Board(Integer.parseInt(ls.get(0)), Integer.parseInt(ls.get(1)), Integer.parseInt(ls.get(2)));
+			board = new Board(Integer.parseInt(ls.get(0)), Integer.parseInt(ls.get(1)), Integer.parseInt(ls.get(2)), log);
 			if(isFirstPlayer) {							//Make first move
 				System.out.println("3 1");				// TODO: WORRY ABOUT BOARD SIZE
 				updateBoard("3", "1", 1);
@@ -51,6 +51,7 @@ public class PlayerAI {
 	}
 	
 	int traverse(Board currentBoard) {
+		log.writeLog("EVALUATING MOVES---------------------------");
 		int score = Integer.MIN_VALUE;
 		int index = 4;
 		for(int i = 0; i < board.width; i++) {
@@ -58,6 +59,7 @@ public class PlayerAI {
 				Board nextMove = new Board(currentBoard);
 				nextMove.dropADiscFromTop(i, 1);
 				int value = scoreOfMove(nextMove, 1);
+				log.writeLog("eval index: " + i + " score: " + value);
 				if( score < value) {
 					score = value;
 					index = i;
@@ -69,12 +71,11 @@ public class PlayerAI {
 	
 	int scoreOfMove(Board currentBoard, int currentDepth) {
 		if( currentDepth == MAX_DEPTH || currentBoard.isConnectN() != -1) {
-			log.writeLog("max_depth or connect N " + currentDepth);
-			return currentBoard.eval();
+			return Eval.eval(currentBoard);
 		} else if(currentDepth%2 == 0) {		// MAX
 			int score = Integer.MIN_VALUE;
 			for(int i = 0; i < board.width; i++) {
-				if( board.canDropADiscFromTop(i, 1)){
+				if( currentBoard.canDropADiscFromTop(i, 1)){
 					Board nextMove = new Board(currentBoard);
 					nextMove.dropADiscFromTop(i, 1);
 					int value = scoreOfMove(nextMove, currentDepth+1);
@@ -87,7 +88,7 @@ public class PlayerAI {
 		} else if(currentDepth%2 == 1) {		// MIN
 			int score = Integer.MAX_VALUE;
 			for(int i = 0; i < board.width; i++) {
-				if( board.canDropADiscFromTop(i, 1)){
+				if( currentBoard.canDropADiscFromTop(i, 1)){
 					Board nextMove = new Board(currentBoard);
 					nextMove.dropADiscFromTop(i, 2);
 					int value = scoreOfMove(nextMove, currentDepth+1);
@@ -96,8 +97,9 @@ public class PlayerAI {
 					}
 				}
 			}
-			return 1;
+			return score;
 		}
+		log.writeLog("failed");
 		return -1;
 	}
 	
@@ -110,7 +112,7 @@ public class PlayerAI {
 	}
 	
 	public static void main(String[] args) throws IOException {
-		log = new Log();
+		log = new Log( args[0]);
 		log.writeLog("Intial Log Test----------------");
 		PlayerAI ai=new PlayerAI();
 		System.out.println(ai.playerName);

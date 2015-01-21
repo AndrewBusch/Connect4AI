@@ -1,9 +1,9 @@
+import java.util.Arrays;
+
 /**
  * This code is created for cs 4341 AI 2013a at WPI. All rights are reserved. 
  */
 
-
-import java.util.Arrays;
 
 /**
  * @author lzhu
@@ -13,29 +13,28 @@ public class Board {
 	
 	int width;
 	int height;
-	short[][] board;
+	short board[][];
 	int numOfDiscsInColumn[];
-	int emptyCell=9;
+	short emptyCell=9;
 	int N;
 	int PLAYER1=1;
 	int PLAYER2=2;
 	int NOCONNECTION=-1;
 	int TIE=0;
-	Log log;
+	Log log = new Log();
 	
-	 Board(int height, int width, int N, Log log){
+	 Board(int height, int width, int N){
 		this.width=width;
 		this.height=height;
 		board =new short[height][width];
 		for(int i=0;i<height;i++)
 			for(int j=0;j<width;j++){
-				board[i][j]=(short) this.emptyCell;
+				board[i][j]=this.emptyCell;
 			}
 		numOfDiscsInColumn=new int[this.width];
 //		for(int j=0;j<width;j++)
 //			numOfDiscsInColumn[j]=0;
 		this.N=N;
-		this.log=log;
 	 }
 	 
 	 Board( Board another) {
@@ -48,7 +47,6 @@ public class Board {
 		}
 		this.numOfDiscsInColumn = Arrays.copyOf(another.numOfDiscsInColumn, another.numOfDiscsInColumn.length);
 		this.N = another.N;
-		this.log = another.log;
 	 }
 	 
 	 public void printBoard(){
@@ -59,6 +57,18 @@ public class Board {
 				}
 				log.writeLog("");
 		 }
+	 }
+	 
+	 public int eval() {
+		int sum = 0;
+		int score = isConnectN();
+		if( score == 1 ) {			// -1 no winner, 0 tie, 1 win, 2 loss
+			sum = 100;
+		} else if( score == 2) {
+			sum = -100;
+		} else if( score == -1) {
+	 	}
+		return sum;
 	 }
 	 
 	 public boolean canRemoveADiscFromBottom(int col, int currentPlayer){
@@ -81,30 +91,31 @@ public class Board {
 		 for(i=height-1;i>height-this.numOfDiscsInColumn[col];i--){
 			 board[i][col]=board[i-1][col];
 		 }
-		 board[i][col]=(short) this.emptyCell;
+		 board[i][col]=this.emptyCell;
 		 this.numOfDiscsInColumn[col]--;
 	 }
 	 
 	 
 	 public boolean canDropADiscFromTop(int col, int currentPlayer){
+		 log.writeLog( "hang on " + this.numOfDiscsInColumn[col] + " " + this.height);
 		 if(col<0 || col>=this.width) {
 			 log.writeLog("Illegal column!");
 			 return false;
-			 }
-		 else if(this.numOfDiscsInColumn[col]==this.height){
-			 //log.writeLog("Column is already full. Cannot drop more disc in it.");
+		 }
+		 else if(this.numOfDiscsInColumn[col] == this.height){
+			 log.writeLog("Column is already full. Cannot drop more disc in it.");
 			 return false;
 		 }
-		 else
+		 else{
 			 return true;
+		 }
 	 }
 	 
 	 public void dropADiscFromTop(int col, int currentplayer){
-		 int firstEmptyCellRow=this.height-this.numOfDiscsInColumn[col]-1;
-		 if(firstEmptyCellRow == -1){
-			 printBoard();
-		 }
-		 board[firstEmptyCellRow][col]=(short) currentplayer;
+		 int firstEmptyCellRow=height-this.numOfDiscsInColumn[col]-1;
+		 //log.writeLog("really? " + (height-this.numOfDiscsInColumn[col]-1));
+		 board[firstEmptyCellRow][col]=(short)currentplayer;
+		 log.writeLog("in the thing1");
 		 this.numOfDiscsInColumn[col]++;
 	 }
 	 
@@ -330,7 +341,7 @@ public class Board {
 			 throw new IllegalArgumentException("The row or column number is out of bound!");
 		 if(player!=this.PLAYER1 && player!=this.PLAYER2)
 			 throw new IllegalArgumentException("Wrong player!");
-		 this.board[row][col]=(short) player;
+		 this.board[row][col]=(short)player;
 	 }
 	 
 	 /**
@@ -413,5 +424,15 @@ public class Board {
 		// int tmp_winner= this.checkHorizontally();
 		 int tmp_winner= this.checkDiagonally1();
 		 log.writeLog("Winner: "+tmp_winner);	
+	 } 
+	 
+	 public static void main(String [] arg){
+		 Board b=new Board(6,7,3);
+
+ 		 b.printBoard();
+//		 b.test1();
+//		 b.test2();
+//       b.test3();
+ //        b.test5();
 	 }
 }
