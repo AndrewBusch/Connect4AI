@@ -6,11 +6,11 @@ import java.util.Iterator;
 import java.util.List;
 
 public class PlayerAI {
-	String playerName = "Computer";
+	String playerName;
 	BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
 	Board board;
 	boolean isFirstPlayer;
-	final int MAX_DEPTH = 8;
+	final int MAX_DEPTH = 7;
 	static Log log;
 	
 	public void processInput() throws IOException{	
@@ -40,7 +40,9 @@ public class PlayerAI {
 		else if(ls.size()==4){							//player1: aa player2: bb
 			if(ls.indexOf(playerName) == 1) {
 				isFirstPlayer = true;
+				log.writeLog("first");
 			} else {
+				log.writeLog("second");
 				isFirstPlayer = false;
 			}
 		}
@@ -60,6 +62,7 @@ public class PlayerAI {
 				nextMove.dropADiscFromTop(i, 1);
 				int value = scoreOfMove(nextMove, 1);
 				log.writeLog("eval index: " + i + " score: " + value);
+				nextMove.printBoard();
 				if( score < value) {
 					score = value;
 					index = i;
@@ -70,7 +73,7 @@ public class PlayerAI {
 	}
 	
 	int scoreOfMove(Board currentBoard, int currentDepth) {
-		if( currentDepth == MAX_DEPTH || currentBoard.isConnectN() != -1) {
+		if( currentDepth == MAX_DEPTH || currentBoard.isConnectN() != -1 || currentBoard.isFull()) {
 			return Eval.eval(currentBoard);
 		} else if(currentDepth%2 == 0) {		// MAX
 			int score = Integer.MIN_VALUE;
@@ -111,11 +114,28 @@ public class PlayerAI {
 		}
 	}
 	
+	void setName(String name) {
+		playerName = name;
+	}
+	
 	public static void main(String[] args) throws IOException {
 		log = new Log( args[0]);
 		log.writeLog("Intial Log Test----------------");
 		PlayerAI ai=new PlayerAI();
+		ai.setName("computer" + args[0]);
 		System.out.println(ai.playerName);
+			ai.processInput();
+			ai.processInput();
+			ai.processInput();
+			ai.processInput();
+			ai.processInput();
+			ai.processInput();
+			ai.processInput();
+			ai.processInput();
+			ai.processInput();
+			ai.processInput();
+			ai.processInput();
+			ai.processInput();
 			ai.processInput();
 			ai.processInput();
 			ai.processInput();

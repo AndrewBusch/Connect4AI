@@ -7,7 +7,7 @@ public class Eval {
 		if( score == 1 ) {			// -1 no winner, 0 tie, 1 win, 2 loss
 			sum = 1000;
 		} else if( score == 2) {
-			sum = -10000;
+			sum = -1000;
 		} else if( score == -1) {
 	 	}
 		return sum;

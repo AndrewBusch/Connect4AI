@@ -90,7 +90,7 @@ public class Board {
 		 if(col<0 || col>=this.width) {
 			 log.writeLog("Illegal column!");
 			 return false;
-			 }
+		 }
 		 else if(this.numOfDiscsInColumn[col]==this.height){
 			 //log.writeLog("Column is already full. Cannot drop more disc in it.");
 			 return false;
@@ -154,8 +154,9 @@ public class Board {
 				else if(board[i][j]==PLAYER2){
 					max1=0;
 					max2++;
-					if(max2==N)
+					if(max2==N) {
 						 player2_win=true;
+					}
 				}
 				else{
 					max1=0;
@@ -241,8 +242,10 @@ public class Board {
 				else if(board[height-1-y][x]==PLAYER2){
 					max1=0;
 					max2++;
-					if(max2==N)
+					if(max2==N) {
 						player2_win=true;
+						log.writeLog("player2 wonned");
+					}
 				}
 				else{
 					max1=0;

@@ -7,7 +7,7 @@ public class Log {
 	boolean logging = true;
 	
 	public Log(String on){
-		if(on.equals("1")) {
+		if(!on.equals("0")) {
 			logging = false;
 		}
 		fileName = "Log.txt";
