@@ -18,7 +18,8 @@ public class PlayerAI {
 	final int MAX_DEPTH = 13;
 	static Log log;
 	
-	public void processInput() throws IOException{	
+	public boolean processInput() throws IOException{
+		boolean gameOver = false;
 		log.writeLog("turn starts");
     	String s=input.readLine();
     	log.writeLog("read input");
@@ -26,7 +27,7 @@ public class PlayerAI {
 		log.writeLog("parsed input");
 		if(ls.size()==2){ 								//if opponent just played
 			updateBoard(ls.get(0), ls.get(1), 2);
-			int moveColumn = traverse(board);
+			int moveColumn = alphaBetaSearch(board);
 			updateBoard(Integer.toString(moveColumn), "1", 1);
 			log.writeLog(moveColumn + " 1");
 			System.out.println(moveColumn + " 1");
@@ -34,6 +35,7 @@ public class PlayerAI {
 		}
 		else if(ls.size()==1){							//if game over?
 			log.writeLog("game over");
+			return true;
 			//System.out.println("4 1");
 		}
 		else if(ls.size()==5){          				//ls contains game info
@@ -56,28 +58,29 @@ public class PlayerAI {
 			log.writeLog("not what I want");
 			System.out.println("not what I want");
 		}
+		return false;
 	}
 	
-	int traverse(Board currentBoard) {
+	int alphaBetaSearch(Board currentBoard) {
 		log.writeLog("EVALUATING MOVES---------------------------");
-		int score = Integer.MIN_VALUE;
+		int v = Integer.MIN_VALUE;
 		int index = 4;
 		int alpha = Integer.MIN_VALUE;
 		int beta = Integer.MAX_VALUE;
-		int value;
+		int score;
 		for(int i = 0; i < board.width; i++) {
 			if( board.canDropADiscFromTop(i, 1)){
 				Board nextMove = new Board(currentBoard);
 				nextMove.dropADiscFromTop(i, 1);
 				if( currentBoard.isConnectN() != -1 || currentBoard.isFull()) {
-					value = Eval.eval(currentBoard) * (1 - (0 / MAX_DEPTH));
+					score = Eval.eval(currentBoard);
 				}
-				else value = min(nextMove, 1, alpha, beta);
-				if( score < value) {
-					score = value;
+				else score = min(nextMove, 1, alpha, beta);
+				if( v < score) {
+					v = score;
 					index = i;
 				}
-				if( score >= alpha) alpha = score;
+				if( v >= alpha) alpha = v;
 			}
 		}
 		return index;
@@ -88,18 +91,18 @@ public class PlayerAI {
 			return Eval.eval(currentBoard) * (1 - (currentDepth / MAX_DEPTH));
 		}
 		
-		int score = Integer.MIN_VALUE;
+		int v = Integer.MIN_VALUE;
 		for(int i = 0; i < board.width; i++) {
 			if( currentBoard.canDropADiscFromTop(i, 1)){
 				Board nextMove = new Board(currentBoard);
 				nextMove.dropADiscFromTop(i, 1);
-				int value = min(nextMove, currentDepth+1, alpha, beta);
-				if( score < value) score = value;
-				if( score >= beta) return score;
-				if( score >= alpha) alpha = score;
+				int score = min(nextMove, currentDepth+1, alpha, beta);
+				if( v < score) v = score;
+				if( v >= beta) return v;
+				if( v >= alpha) alpha = v;
 			}
 		}
-		return score;
+		return v;
 	}
 
 	int min( Board currentBoard, int currentDepth, int alpha, int beta) {
@@ -107,18 +110,18 @@ public class PlayerAI {
 			return Eval.eval(currentBoard) * (1 - (currentDepth / MAX_DEPTH));
 		}
 		
-		int score = Integer.MAX_VALUE;
+		int v = Integer.MAX_VALUE;
 		for(int i = 0; i < board.width; i++) {
 			if( currentBoard.canDropADiscFromTop(i, 1)){
 				Board nextMove = new Board(currentBoard);
 				nextMove.dropADiscFromTop(i, 2);
-				int value = max(nextMove, currentDepth+1, alpha, beta);
-				if( score > value) score = value;
-				if( score <= alpha) return score;
-				if( score <= beta) beta = score;
+				int score = max(nextMove, currentDepth+1, alpha, beta);
+				if( v > score) v = score;
+				if( v <= alpha) return v;
+				if( v <= beta) beta = v;
 			}
 		}
-		return score;
+		return v;
 	}
 	
 	void updateBoard(String col, String action, int player) {
@@ -139,37 +142,7 @@ public class PlayerAI {
 		PlayerAI ai=new PlayerAI();
 		ai.setName("computer" + args[0]);
 		System.out.println(ai.playerName);
-			ai.processInput();
-			ai.processInput();
-			ai.processInput();
-			ai.processInput();
-			ai.processInput();
-			ai.processInput();
-			ai.processInput();
-			ai.processInput();
-			ai.processInput();
-			ai.processInput();
-			ai.processInput();
-			ai.processInput();
-			ai.processInput();
-			ai.processInput();
-			ai.processInput();
-			ai.processInput();
-			ai.processInput();
-			ai.processInput();
-			ai.processInput();
-			ai.processInput();
-			ai.processInput();
-			ai.processInput();
-			ai.processInput();
-			ai.processInput();
-			ai.processInput();
-			ai.processInput();
-			ai.processInput();
-			ai.processInput();
-			ai.processInput();
-			ai.processInput();
-			ai.processInput();
-			ai.processInput();
+		boolean gameOver = false;
+		while(!gameOver) gameOver = ai.processInput();
 	}
 }
