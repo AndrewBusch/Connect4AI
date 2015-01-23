@@ -115,6 +115,22 @@ public class Board {
 		 
 	 }
 	 
+	 /**
+	  * Check if one of the players has n checkers in an position to get N in a row (horizontally, vertically or diagonally) 
+	  *  @return a vector of the total number of checkers in an advantageous position
+	  */
+	 
+	 public int[] numOfConnectN(int n){
+		int[] vals = {0, 0};
+		checkHorizontally(n, vals);
+		checkVertically(n, vals);
+		checkDiagonally1(n, vals);
+		checkDiagonally2(n, vals);
+		
+		return vals;
+		 
+	 }
+	 
   public int checkHorizontally(){
 	  int max1=0;
 		 int max2=0;
@@ -152,7 +168,39 @@ public class Board {
 		 
 		 return this.NOCONNECTION;
   }
-
+  
+  public void checkHorizontally(int n, int[] vals){
+	  	 int max1=0;
+		 int max2=0;
+		 //check each row, horizontally
+		 for(int i=0;i<this.height;i++){
+			 max1=0;
+			 max2=0;
+			for(int j=0;j<this.width;j++){
+				if(board[i][j]==PLAYER1){
+					max1++;
+					max2=0;
+					if(max1==n) {
+						 vals[0]++;
+						 max1=0;
+					}
+				}
+				else if(board[i][j]==PLAYER2){
+					max1=0;
+					max2++;
+					if(max2==n) {
+						 vals[1]++;
+						 max2=0;
+					}
+				}
+				else{
+					max1=0;
+					max2=0;
+				}
+			}
+		 }
+  }
+  
   public int checkVertically(){
 	  //check each column, vertically
 	  int max1=0;
@@ -191,7 +239,38 @@ public class Board {
 		 
 		 return this.NOCONNECTION;
   }
-  
+
+  public void checkVertically(int n, int[] vals){
+	  //check each column, vertically
+	  int max1=0;
+	  int max2=0;		 
+		 for(int j=0;j<this.width;j++){
+			 max1=0;
+			 max2=0;
+			for(int i=0;i<this.height;i++){
+				if(board[i][j]==PLAYER1){
+					max1++;
+					max2=0;
+					if(max1==n) {
+						 vals[0]++;
+						 max1=0;
+					}
+				}
+				else if(board[i][j]==PLAYER2){
+					max1=0;
+					max2++;
+					if(max2==n) {
+						vals[1]++;
+						max2=0;
+					}
+				}
+				else{
+					max1=0;
+					max2=0;
+				}
+			}
+		 }
+  }
    public int checkDiagonally1(){
 	 //check diagonally y=-x+k
 	   int max1=0;
@@ -243,6 +322,51 @@ public class Board {
 		 return this.NOCONNECTION;
    }
 	 
+   public void checkDiagonally1(int n, int[] vals){
+		 //check diagonally y=-x+k
+		   int max1=0;
+		   int max2=0;
+		   int upper_bound=height-1+width-1-(N-1);
+		   
+			 for(int k=n-1;k<=upper_bound;k++){			
+				 max1=0;
+				 max2=0;
+				 int x,y;
+				 if(k<width) 
+					 x=k;
+				 else
+					 x=width-1;
+				 y=-x+k;
+				 
+				while(x>=0  && y<height){
+					// System.out.println("k: "+k+", x: "+x+", y: "+y);
+					if(board[height-1-y][x]==PLAYER1){
+						max1++;
+						max2=0;
+						if(max1==n) {
+							 vals[0]++;
+							 max1=0;
+						}
+					}
+					else if(board[height-1-y][x]==PLAYER2){
+						max1=0;
+						max2++;
+						if(max2==n) {
+							vals[1]++;
+							max2=0;
+						}
+					}
+					else{
+						max1=0;
+						max2=0;
+					}
+					x--;
+					y++;
+				}	 
+				 
+			 }
+	   }
+   
    public int checkDiagonally2(){
 	 //check diagonally y=x-k
 	   int max1=0;
@@ -294,6 +418,52 @@ public class Board {
 		 
 		 return this.NOCONNECTION;
    }
+   
+   public int checkDiagonally2(int n, int[] vals){
+		 //check diagonally y=x-k
+		   int max1=0;
+		   int max2=0;
+		   int upper_bound=width-1-(n-1);
+		   int  lower_bound=-(height-1-(n-1));
+		  // System.out.println("lower: "+lower_bound+", upper_bound: "+upper_bound);
+			 for(int k=lower_bound;k<=upper_bound;k++){			
+				 max1=0;
+				 max2=0;
+				 int x,y;
+				 if(k>=0) 
+					 x=k;
+				 else
+					 x=0;
+				 y=x-k;
+				while(x>=0 && x<width && y<height){
+					// System.out.println("k: "+k+", x: "+x+", y: "+y);
+					if(board[height-1-y][x]==PLAYER1){
+						max1++;
+						max2=0;
+						if(max1==n) {
+							 vals[0]++;
+							 max1=0;
+						}
+					}
+					else if(board[height-1-y][x]==PLAYER2){
+						max1=0;
+						max2++;
+						if(max2==n) {
+							vals[1]++;
+							max2=0;
+						}
+					}
+					else{
+						max1=0;
+						max2=0;
+					}
+					x++;
+					y++;
+				}	 
+				 
+			 }	 //end for y=x-k
+			 
+	   }
    
 	public boolean isFull(){
 		for(int i=0;i<height;i++)
@@ -395,10 +565,32 @@ public class Board {
 		 System.out.println("Winner: "+tmp_winner);	
 	 } 
 	 
-	 public static void main(String [] arg){
+	 private void testConnectN() {
+		 dropADiscFromTop(0, 1);
+		 dropADiscFromTop(1, 1);
+		 dropADiscFromTop(2, 1);
+		 dropADiscFromTop(3, 1);
+		 dropADiscFromTop(3, 1);
+		 dropADiscFromTop(3, 2);
+		 dropADiscFromTop(4, 2);
+		 dropADiscFromTop(4, 2);
+		 dropADiscFromTop(4, 2);
+		 dropADiscFromTop(5, 2);
+		 
+		 printBoard();
+		 
+		 System.out.println("Num of connect 3's in the game");
+		 int[] vals = numOfConnectN(3);
+ 		 System.out.println("Player 1's Advantages: " + vals[0]);
+ 		 System.out.println("Player 2's Advantages: " + vals[1]);
+		 
+	 }
+	 
+	 public static void main(String[] args){
 		 Board b=new Board(6,7,3);
 
  		 b.printBoard();
+ 		 b.testConnectN();
 //		 b.test1();
 //		 b.test2();
 //       b.test3();
