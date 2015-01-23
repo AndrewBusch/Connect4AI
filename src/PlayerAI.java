@@ -15,7 +15,7 @@ public class PlayerAI {
 	BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
 	Board board;
 	boolean isFirstPlayer;
-	final int MAX_DEPTH = 5;
+	final int MAX_DEPTH = 13;
 	static Log log;
 	
 	public void processInput() throws IOException{	
@@ -62,54 +62,63 @@ public class PlayerAI {
 		log.writeLog("EVALUATING MOVES---------------------------");
 		int score = Integer.MIN_VALUE;
 		int index = 4;
+		int alpha = Integer.MIN_VALUE;
+		int beta = Integer.MAX_VALUE;
+		int value;
 		for(int i = 0; i < board.width; i++) {
 			if( board.canDropADiscFromTop(i, 1)){
 				Board nextMove = new Board(currentBoard);
 				nextMove.dropADiscFromTop(i, 1);
-				int value = scoreOfMove(nextMove, 1);
-				log.writeLog("eval index: " + i + " score: " + value);
-				nextMove.printBoard();
+				if( currentBoard.isConnectN() != -1 || currentBoard.isFull()) {
+					value = Eval.eval(currentBoard) * (1 - (0 / MAX_DEPTH));
+				}
+				else value = min(nextMove, 1, alpha, beta);
 				if( score < value) {
 					score = value;
 					index = i;
 				}
+				if( score >= alpha) alpha = score;
 			}
 		}
 		return index;
 	}
 	
-	int scoreOfMove(Board currentBoard, int currentDepth) {
+	int max( Board currentBoard, int currentDepth, int alpha, int beta) {
 		if( currentDepth == MAX_DEPTH || currentBoard.isConnectN() != -1 || currentBoard.isFull()) {
 			return Eval.eval(currentBoard) * (1 - (currentDepth / MAX_DEPTH));
-		} else if(currentDepth%2 == 0) {		// MAX
-			int score = Integer.MIN_VALUE;
-			for(int i = 0; i < board.width; i++) {
-				if( currentBoard.canDropADiscFromTop(i, 1)){
-					Board nextMove = new Board(currentBoard);
-					nextMove.dropADiscFromTop(i, 1);
-					int value = scoreOfMove(nextMove, currentDepth+1);
-					if( score < value) {
-						score = value;
-					}
-				}
-			}
-			return score;
-		} else if(currentDepth%2 == 1) {		// MIN
-			int score = Integer.MAX_VALUE;
-			for(int i = 0; i < board.width; i++) {
-				if( currentBoard.canDropADiscFromTop(i, 1)){
-					Board nextMove = new Board(currentBoard);
-					nextMove.dropADiscFromTop(i, 2);
-					int value = scoreOfMove(nextMove, currentDepth+1);
-					if( score > value) {
-						score = value;
-					}
-				}
-			}
-			return score;
 		}
-		log.writeLog("failed");
-		return -1;
+		
+		int score = Integer.MIN_VALUE;
+		for(int i = 0; i < board.width; i++) {
+			if( currentBoard.canDropADiscFromTop(i, 1)){
+				Board nextMove = new Board(currentBoard);
+				nextMove.dropADiscFromTop(i, 1);
+				int value = min(nextMove, currentDepth+1, alpha, beta);
+				if( score < value) score = value;
+				if( score >= beta) return score;
+				if( score >= alpha) alpha = score;
+			}
+		}
+		return score;
+	}
+
+	int min( Board currentBoard, int currentDepth, int alpha, int beta) {
+		if( currentDepth == MAX_DEPTH || currentBoard.isConnectN() != -1 || currentBoard.isFull()) {
+			return Eval.eval(currentBoard) * (1 - (currentDepth / MAX_DEPTH));
+		}
+		
+		int score = Integer.MAX_VALUE;
+		for(int i = 0; i < board.width; i++) {
+			if( currentBoard.canDropADiscFromTop(i, 1)){
+				Board nextMove = new Board(currentBoard);
+				nextMove.dropADiscFromTop(i, 2);
+				int value = max(nextMove, currentDepth+1, alpha, beta);
+				if( score > value) score = value;
+				if( score <= alpha) return score;
+				if( score <= beta) beta = score;
+			}
+		}
+		return score;
 	}
 	
 	void updateBoard(String col, String action, int player) {
@@ -130,6 +139,17 @@ public class PlayerAI {
 		PlayerAI ai=new PlayerAI();
 		ai.setName("computer" + args[0]);
 		System.out.println(ai.playerName);
+			ai.processInput();
+			ai.processInput();
+			ai.processInput();
+			ai.processInput();
+			ai.processInput();
+			ai.processInput();
+			ai.processInput();
+			ai.processInput();
+			ai.processInput();
+			ai.processInput();
+			ai.processInput();
 			ai.processInput();
 			ai.processInput();
 			ai.processInput();
