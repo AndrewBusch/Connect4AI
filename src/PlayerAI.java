@@ -5,19 +5,25 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
+
+// java -jar Referee.jar "java -jar C:\Users\Crozic\Documents\work\CS\AI\testPlayer.jar 1" "java -jar C:\Users\Crozic\Documents\work\CS\AI\testPlayer.jar 0" 6 7 3 10 10
+
+
+
 public class PlayerAI {
 	String playerName;
 	BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
 	Board board;
 	boolean isFirstPlayer;
-	final int MAX_DEPTH = 7;
+	final int MAX_DEPTH = 5;
 	static Log log;
 	
 	public void processInput() throws IOException{	
 		log.writeLog("turn starts");
     	String s=input.readLine();
-		List<String> ls=Arrays.asList(s.split(" "));
-		
+    	log.writeLog("read input");
+		List<String> ls = Arrays.asList(s.split(" ", 5));
+		log.writeLog("parsed input");
 		if(ls.size()==2){ 								//if opponent just played
 			updateBoard(ls.get(0), ls.get(1), 2);
 			int moveColumn = traverse(board);
@@ -74,7 +80,7 @@ public class PlayerAI {
 	
 	int scoreOfMove(Board currentBoard, int currentDepth) {
 		if( currentDepth == MAX_DEPTH || currentBoard.isConnectN() != -1 || currentBoard.isFull()) {
-			return Eval.eval(currentBoard);
+			return Eval.eval(currentBoard) * (1 - (currentDepth / MAX_DEPTH));
 		} else if(currentDepth%2 == 0) {		// MAX
 			int score = Integer.MIN_VALUE;
 			for(int i = 0; i < board.width; i++) {
@@ -124,9 +130,6 @@ public class PlayerAI {
 		PlayerAI ai=new PlayerAI();
 		ai.setName("computer" + args[0]);
 		System.out.println(ai.playerName);
-			ai.processInput();
-			ai.processInput();
-			ai.processInput();
 			ai.processInput();
 			ai.processInput();
 			ai.processInput();

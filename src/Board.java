@@ -15,7 +15,7 @@ public class Board {
 	int height;
 	short[][] board;
 	int numOfDiscsInColumn[];
-	int emptyCell=9;
+	int emptyCell=0;
 	int N;
 	int PLAYER1=1;
 	int PLAYER2=2;
@@ -244,7 +244,7 @@ public class Board {
 					max2++;
 					if(max2==N) {
 						player2_win=true;
-						log.writeLog("player2 wonned");
+						//log.writeLog("player2 wonned");
 					}
 				}
 				else{
