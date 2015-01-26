@@ -92,6 +92,7 @@ public class PlayerAI {
 					index = i;
 				}
 				if( v >= alpha) alpha = v;
+				log.writeLog("Index: " + i + " Value: " + score);
 			}
 		}
 		return index;
@@ -99,7 +100,7 @@ public class PlayerAI {
 	
 	int max( Board currentBoard, int currentDepth, int alpha, int beta) {
 		if( currentDepth == MAX_DEPTH || currentBoard.isConnectN() != -1 || currentBoard.isFull()) {
-			return Eval.eval(currentBoard) * (1 - (currentDepth / MAX_DEPTH));
+			return (int)(Eval.eval(currentBoard) * (1 - (double) (currentDepth -1) / MAX_DEPTH));
 		}
 		
 		int v = Integer.MIN_VALUE;
@@ -120,7 +121,7 @@ public class PlayerAI {
 
 	int min( Board currentBoard, int currentDepth, int alpha, int beta) {
 		if( currentDepth == MAX_DEPTH || currentBoard.isConnectN() != -1 || currentBoard.isFull()) {
-			return Eval.eval(currentBoard) * (1 - (currentDepth / MAX_DEPTH));
+			return (int)(Eval.eval(currentBoard) * (1- (double) (currentDepth -1) / MAX_DEPTH));
 		}
 		
 		int v = Integer.MAX_VALUE;

@@ -446,7 +446,7 @@ public class Board {
 		   int max2=0;
 		   int gap1=0;
 		   int gap2=0;
-		   int upper_bound=height-1+width-1-(N-1);
+		   int upper_bound=height-1+width-1-(n-1);
 		   
 			 for(int k=n-1;k<=upper_bound;k++){			
 				 max1=0;
@@ -739,21 +739,31 @@ public class Board {
 		 
 		 printBoard2();
 		 
-		 System.out.println("Num of connect 3's in the game");
-		 int[] vals = numOfConnectN(3);
- 		 System.out.println("Player 1's Connected Advantages: " + vals[0]);
- 		 System.out.println("Player 2's Connected Advantages: " + vals[1]);
- 		 System.out.println("Player 1's Split Advantages: " + vals[2]);
- 		 System.out.println("Player 2's Split Advantages: " + vals[3]);
+//		 System.out.println("Num of connect 3's in the game");
+//		 int[] vals = numOfConnectN(3);
+// 		 System.out.println("Player 1's Connected Advantages: " + vals[0]);
+// 		 System.out.println("Player 2's Connected Advantages: " + vals[1]);
+// 		 System.out.println("Player 1's Split Advantages: " + vals[2]);
+// 		 System.out.println("Player 2's Split Advantages: " + vals[3]);
  		 
 		 
 	 }
 	 
-	 public static void main(String[] args){
-		 Board b=new Board(6,7,3);
+	 private void testEval() {
 
+		 System.out.println("Eval of this board");
+		 System.out.println(Eval.eval(this));
+	 }
+	 
+	 public static void main(String[] args){
+		 Board b=new Board(6,7,4);
  		 b.printBoard2();
  		 b.testSplitConnectN();
+ 		 
+		 long startTime = System.nanoTime();
+		 b.testEval();
+		 long endTime = System.nanoTime();
+		 System.out.println("Took "+(endTime - startTime) + " ns"); 
 //		 b.test1();
 //		 b.test2();
 //       b.test3();
