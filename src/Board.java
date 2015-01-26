@@ -1,18 +1,22 @@
 /**
+ * Board for ConnectN
+ * 
  * This code is created for cs 4341 AI 2013a at WPI. All rights are reserved. 
+ * Modified for use with our connectN AI
+ * 
+ * Keeps track of the current board state
+ * 
+ * @author lzhu @author fmsanchez @author abbusch
  */
 
 
 import java.util.ArrayList;
 import java.util.Arrays;
 
-/**
- * @author lzhu
- *
- */
 public class Board {
 	
 	int width;
+	int center;
 	int height;
 	short[][] board;
 	int numOfDiscsInColumn[];
@@ -28,6 +32,7 @@ public class Board {
 	
 	 Board(int height, int width, int N, Log log){
 		this.width=width;
+		this.center = (int)((double)width / 2);
 		this.height=height;
 		board =new short[height][width];
 		for(int i=0;i<height;i++)
@@ -45,6 +50,7 @@ public class Board {
 	 
 	 Board(int height, int width, int N){
 		this.width=width;
+		this.center = (int)((double)width / 2);
 		this.height=height;
 		board =new short[height][width];
 		for(int i=0;i<height;i++)
@@ -60,6 +66,7 @@ public class Board {
 	 Board( Board another) {
 		this.width = another.width;
 		this.height = another.height;
+		this.center = another.center;
 		board = new short[height][width];
 		numOfDiscsInColumn=new int[this.width];
 		for(int i = 0; i < height; i++){
@@ -219,6 +226,7 @@ public class Board {
 	 
 	 /**
 	  * Check if one of the players has n checkers in an position to get N in a row (horizontally, vertically or diagonally) 
+	  * @param n the number in a row you are searching for
 	  *  @return a vector of the total number of checkers in an advantageous position
 	  */
 	 
@@ -233,7 +241,12 @@ public class Board {
 		 
 	 }
 	 
-  public int checkHorizontally(){
+	 /**
+	  * Check if one of the players gets N checkers in a row horizontally
+	  *  @return the value of winner. If winner=-1, nobody win and game continues; If winner=0/TIE, it's a tie;
+	  * 			If winner=1, player1 wins; If winner=2, player2 wins. 
+	  */
+public int checkHorizontally(){
 	  int max1=0;
 		 int max2=0;
 		 boolean player1_win=false;
@@ -271,9 +284,15 @@ public class Board {
 		 return this.NOCONNECTION;
   }
   
-  public void checkHorizontally(int n, int[] vals){
+  /**
+   * checks the board horizontally to find n in a row with up one space between checkers
+ * @param n the number in a row to search for
+ * @param vals the array to populate with counts for num connected, and num split
+ */
+public void checkHorizontally(int n, int[] vals){
 	  	 int max1=0;
 		 int max2=0;
+		 //keeps track of number of gaps per player
 		 int gap1=0;
 		 int gap2=0;
 		 //check each row, horizontally
@@ -287,6 +306,7 @@ public class Board {
 					max1++;
 					max2=0;
 					if(max1==n) {
+						//test gaps to determine where to add value to
 						if(gap1==0) {
 							 vals[0]++;
 						} else {
@@ -299,6 +319,7 @@ public class Board {
 					max1=0;
 					max2++;
 					if(max2==n) {
+						//test gaps to determine where to add value to
 						if(gap2==0) {
 							vals[1]++;
 						} else {
@@ -308,6 +329,7 @@ public class Board {
 					}
 				}
 				else{
+					//check gaps before resetting variables
 					if(++gap1 > 1) {
 						max1=0;
 					}
@@ -318,7 +340,11 @@ public class Board {
 			}
 		 }
   }
-  
+  /**
+	  * Check if one of the players gets N checkers in a row vertically
+	  *  @return the value of winner. If winner=-1, nobody win and game continues; If winner=0/TIE, it's a tie;
+	  * 			If winner=1, player1 wins; If winner=2, player2 wins. 
+	  */
   public int checkVertically(){
 	  //check each column, vertically
 	  int max1=0;
@@ -358,7 +384,14 @@ public class Board {
 		 return this.NOCONNECTION;
   }
 
+  
+  /**
+   * checks the board vertically to find n in a row with up one space between checkers
+ * @param n the number in a row to search for
+ * @param vals the array to populate with counts for num connected, and num split
+ */
   public void checkVertically(int n, int[] vals){
+	  //no gap check here, since there can be no vertical gaps
 	  //check each column, vertically
 	  int max1=0;
 	  int max2=0;		 
@@ -389,6 +422,11 @@ public class Board {
 			}
 		 }
   }
+  /**
+	  * Check if one of the players gets N checkers in a row diagonally left to right
+	  *  @return the value of winner. If winner=-1, nobody win and game continues; If winner=0/TIE, it's a tie;
+	  * 			If winner=1, player1 wins; If winner=2, player2 wins. 
+	  */
    public int checkDiagonally1(){
 	 //check diagonally y=-x+k
 	   int max1=0;
@@ -439,7 +477,13 @@ public class Board {
 		 
 		 return this.NOCONNECTION;
    }
-	 
+
+   
+   /**
+    * checks the board diagonally left to right to find n in a row with up one space between checkers
+  * @param n the number in a row to search for
+  * @param vals the array to populate with counts for num connected, and num split
+  */ 
    public void checkDiagonally1(int n, int[] vals){
 		 //check diagonally y=-x+k
 		   int max1=0;
@@ -451,6 +495,7 @@ public class Board {
 			 for(int k=n-1;k<=upper_bound;k++){			
 				 max1=0;
 				 max2=0;
+				 //keeps track of number of gaps per player
 				 gap1=0;
 				 gap2=0;
 				 int x,y;
@@ -466,6 +511,7 @@ public class Board {
 						max1++;
 						max2=0;
 						if(max1==n) {
+							//test gaps to determine where to add value to
 							if(gap1==0) {
 								 vals[0]++;
 							} else {
@@ -478,6 +524,7 @@ public class Board {
 						max1=0;
 						max2++;
 						if(max2==n) {
+							//test gaps to determine where to add value to
 							if(gap2==0) {
 								vals[1]++;
 							} else {
@@ -487,6 +534,7 @@ public class Board {
 						}
 					}
 					else{
+						//check gaps before resetting variables
 						if(++gap1 > 1) {
 							max1=0;
 						}
@@ -500,6 +548,12 @@ public class Board {
 				 
 			 }
 	   }
+   
+   /**
+	  * Check if one of the players gets N checkers in a row diagonally right to left
+	  *  @return the value of winner. If winner=-1, nobody win and game continues; If winner=0/TIE, it's a tie;
+	  * 			If winner=1, player1 wins; If winner=2, player2 wins. 
+	  */
    
    public int checkDiagonally2(){
 	 //check diagonally y=x-k
@@ -552,11 +606,18 @@ public class Board {
 		 
 		 return this.NOCONNECTION;
    }
+
    
+   /**
+    * checks the board diagonally right to left to find n in a row with up one space between checkers
+  * @param n the number in a row to search for
+  * @param vals the array to populate with counts for num connected, and num split
+  */
    public void checkDiagonally2(int n, int[] vals){
 		 //check diagonally y=x-k
 		   int max1=0;
 		   int max2=0;
+		//keeps track of number of gaps per player
 		   int gap1=0;
 		   int gap2=0;
 		   int upper_bound=width-1-(n-1);
@@ -579,6 +640,7 @@ public class Board {
 						max1++;
 						max2=0;
 						if(max1==n) {
+							//test gaps to determine where to add value to
 							if(gap1==0) {
 								 vals[0]++;
 							} else {
@@ -591,6 +653,7 @@ public class Board {
 						max1=0;
 						max2++;
 						if(max2==n) {
+							//test gaps to determine where to add value to
 							if(gap2==0) {
 								vals[1]++;
 							} else {
@@ -600,6 +663,7 @@ public class Board {
 						}
 					}
 					else{
+						//check gaps before resetting variables
 						if(++gap1 > 1) {
 							max1=0;
 						}
@@ -615,6 +679,10 @@ public class Board {
 			 
 	   }
    
+	/**
+	 * Checks if the board is filled or not
+	 * @return true if the board is completely filled
+	 */
 	public boolean isFull(){
 		for(int i=0;i<height;i++)
 			for(int j=0;j<width;j++){
@@ -625,97 +693,28 @@ public class Board {
 	}
 	 
 	 
-	 public void setBoard(int row, int col, int player){
+	 /**
+	  * Adds a checker of the given player into a specific spot
+	 * @param row the row of the location
+	 * @param col the column of the location
+	 * @param player the player number
+	 */
+	public void setBoard(int row, int col, int player){
+		//makes sure it is a legal move
 		 if(row>=height || col>=width)
 			 throw new IllegalArgumentException("The row or column number is out of bound!");
+		 //makes sure its a legal player
 		 if(player!=this.PLAYER1 && player!=this.PLAYER2)
 			 throw new IllegalArgumentException("Wrong player!");
 		 this.board[row][col]=(short)player;
 	 }
 	 
+	
 	 /**
-	  * test is connect N diagonally y=-x+k
-	  * */ 
-	 private void test1(){
-		 dropADiscFromTop(2,1);
-		 dropADiscFromTop(1,2);
-		 dropADiscFromTop(1,1);
-		 dropADiscFromTop(0,2);
-		 dropADiscFromTop(0,1);
-		 dropADiscFromTop(2,2);
-		 dropADiscFromTop(0,1);
-		 printBoard();
-		 int tmp_winner= checkDiagonally1();
-		 System.out.println("Winner: "+tmp_winner);	
-	 }
-	 /**
-	  * test is connect N diagonally y=-x+k
-	  * */ 
-	 private void test2(){		
-		 setBoard(1,2,this.PLAYER1);
-		 setBoard(2,3,this.PLAYER1);
-		 setBoard(3,4,this.PLAYER1);		 
-		 printBoard();
-		 int tmp_winner= checkDiagonally1();
-		 //int tmp_winner= isConnectN();
-		 System.out.println("Winner: "+tmp_winner);	
-	 }
-
-	 /**
-	  * test is connect N diagonally y=x-k
-	  * */ 
-	 private void test3(){		
-//		 setBoard(2,5,this.PLAYER2);
-//		 setBoard(4,3,this.PLAYER2);
-//		 setBoard(3,4,this.PLAYER2);
-		 setBoard(5,4,this.PLAYER1);
-		 setBoard(4,5,this.PLAYER1);
-		 setBoard(3,6,this.PLAYER1);
-		 printBoard();
-		 int tmp_winner= checkDiagonally2();
-		 //int tmp_winner= isConnectN();
-		 System.out.println("Winner: "+tmp_winner);	
-	 }
-	 
-	 
-	 /**
-	  * test is connect N diagonally y=-x+k
-	  * */ 
-	 private void test4(){
-		 setBoard(2,0,this.PLAYER1);
-		 setBoard(3,1,this.PLAYER1);
-		// setBoard(4,2,this.PLAYER1);
-		 setBoard(5,3,this.PLAYER1);		 
-		 printBoard();
-		 int tmp_winner= checkDiagonally1();
-		 //int tmp_winner= isConnectN();
-		 System.out.println("Winner: "+tmp_winner);	
-	 }
-	 /**
-	  * test should ends with tie
-	  * */ 
-	 private void test5(){
-		 setBoard(2,0,this.PLAYER1);
-		 setBoard(3,1,this.PLAYER1);
-		 setBoard(4,2,this.PLAYER1);
-		// setBoard(1,4,this.PLAYER1);
-		 
-//		 setBoard(3,1,this.PLAYER1);
-//		 setBoard(3,2,this.PLAYER1);
-//		 setBoard(3,3,this.PLAYER1);
-//		 setBoard(3,4,this.PLAYER1);
-		 
-		 setBoard(0,3,this.PLAYER2);
-		 setBoard(2,5,this.PLAYER2);
-		 setBoard(2,3,this.PLAYER2);
-		 setBoard(1,4,this.PLAYER2);
-		 printBoard();
-		// int tmp_winner= this.checkHorizontally();
-		 int tmp_winner= this.checkDiagonally1();
-		 System.out.println("Winner: "+tmp_winner);	
-	 } 
-	 
-	 private void testSplitConnectN() {
+	 * A tester function used to populate the board
+	 */
+	private void testPopulate() {
+		 //fills test board in
 		 dropADiscFromTop(0, 1);
 		 dropADiscFromTop(0, 1);
 		 dropADiscFromTop(1, 1);
@@ -738,27 +737,25 @@ public class Board {
 		 dropADiscFromTop(6, 2);
 		 
 		 printBoard2();
-		 
-//		 System.out.println("Num of connect 3's in the game");
-//		 int[] vals = numOfConnectN(3);
-// 		 System.out.println("Player 1's Connected Advantages: " + vals[0]);
-// 		 System.out.println("Player 2's Connected Advantages: " + vals[1]);
-// 		 System.out.println("Player 1's Split Advantages: " + vals[2]);
-// 		 System.out.println("Player 2's Split Advantages: " + vals[3]);
- 		 
-		 
 	 }
 	 
-	 private void testEval() {
+	 /**
+	 * A tester function used to makes sure the eval function returned pertinent values
+	 */
+	private void testEval() {
 
 		 System.out.println("Eval of this board");
 		 System.out.println(Eval.eval(this));
 	 }
 	 
-	 public static void main(String[] args){
+	 /**
+	  * Main function used solely for testing the board and evaluations
+	 * @param args arguments that java requires for main functions
+	 */
+	public static void main(String[] args){
 		 Board b=new Board(6,7,4);
  		 b.printBoard2();
- 		 b.testSplitConnectN();
+ 		 b.testPopulate();
  		 
 		 long startTime = System.nanoTime();
 		 b.testEval();

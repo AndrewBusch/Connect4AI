@@ -86,7 +86,7 @@ public class PlayerAI {
 				if( currentBoard.isConnectN() != -1 || currentBoard.isFull()) {
 					score = Eval.eval(currentBoard);
 				}
-				else score = min(nextMove, 1, alpha, beta);
+				else score = min(nextMove, 1, alpha, beta) - Math.abs(i.column - currentBoard.center);
 				if( v < score) {
 					v = score;
 					index = i;
@@ -110,7 +110,7 @@ public class PlayerAI {
 			if( currentBoard.canMakeMove(i, 1)){
 				Board nextMove = new Board(currentBoard);
 				nextMove.executeMove(i, 1);
-				int score = min(nextMove, currentDepth+1, alpha, beta);
+				int score = min(nextMove, currentDepth+1, alpha, beta) - Math.abs(i.column - currentBoard.center);
 				if( v < score) v = score;
 				if( v >= beta) return v;
 				if( v >= alpha) alpha = v;
@@ -131,7 +131,7 @@ public class PlayerAI {
 			if( currentBoard.canMakeMove(i, 2)){
 				Board nextMove = new Board(currentBoard);
 				nextMove.executeMove(i, 2);
-				int score = max(nextMove, currentDepth+1, alpha, beta);
+				int score = max(nextMove, currentDepth+1, alpha, beta) + Math.abs(i.column - currentBoard.center);
 				if( v > score) v = score;
 				if( v <= alpha) return v;
 				if( v <= beta) beta = v;
