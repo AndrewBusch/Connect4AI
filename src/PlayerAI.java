@@ -15,7 +15,7 @@ public class PlayerAI {
 	BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
 	Board board;
 	boolean isFirstPlayer;
-	final int MAX_DEPTH = 13;
+	final int MAX_DEPTH = 8;
 	static Log log;
 	
 	public boolean processInput() throws IOException{
@@ -40,7 +40,8 @@ public class PlayerAI {
 		}
 		else if(ls.size()==5){          				//ls contains game info
 			board = new Board(Integer.parseInt(ls.get(0)), Integer.parseInt(ls.get(1)), Integer.parseInt(ls.get(2)), log);
-			if(isFirstPlayer) {							//Make first move
+			if(isFirstPlayer && ls.get(3).equals("1") || !isFirstPlayer && ls.get(3).equals("2")) {							//Make first move
+				log.writeLog("Going First!");
 				System.out.println("3 1");				// TODO: WORRY ABOUT BOARD SIZE
 				updateBoard("3", "1", 1);
 			}
@@ -68,6 +69,7 @@ public class PlayerAI {
 		int alpha = Integer.MIN_VALUE;
 		int beta = Integer.MAX_VALUE;
 		int score;
+		log.writeLog("Options for 7 base moves:");
 		for(int i = 0; i < board.width; i++) {
 			if( board.canDropADiscFromTop(i, 1)){
 				Board nextMove = new Board(currentBoard);
@@ -81,6 +83,7 @@ public class PlayerAI {
 					index = i;
 				}
 				if( v >= alpha) alpha = v;
+				log.writeLog("Index: " + i + " Value: " + score);
 			}
 		}
 		return index;
@@ -88,7 +91,7 @@ public class PlayerAI {
 	
 	int max( Board currentBoard, int currentDepth, int alpha, int beta) {
 		if( currentDepth == MAX_DEPTH || currentBoard.isConnectN() != -1 || currentBoard.isFull()) {
-			return Eval.eval(currentBoard) * (1 - (currentDepth / MAX_DEPTH));
+			return (int)(Eval.eval(currentBoard) * (1 - (double) (currentDepth -1) / MAX_DEPTH));
 		}
 		
 		int v = Integer.MIN_VALUE;
@@ -107,7 +110,7 @@ public class PlayerAI {
 
 	int min( Board currentBoard, int currentDepth, int alpha, int beta) {
 		if( currentDepth == MAX_DEPTH || currentBoard.isConnectN() != -1 || currentBoard.isFull()) {
-			return Eval.eval(currentBoard) * (1 - (currentDepth / MAX_DEPTH));
+			return (int)(Eval.eval(currentBoard) * (1- (double) (currentDepth -1) / MAX_DEPTH));
 		}
 		
 		int v = Integer.MAX_VALUE;
