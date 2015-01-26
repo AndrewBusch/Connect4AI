@@ -1,6 +1,7 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
@@ -14,44 +15,50 @@ public class PlayerAI {
 	String playerName;
 	BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
 	Board board;
-	boolean isFirstPlayer;
-	final int MAX_DEPTH = 13;
+	boolean isPlayerOne;
+	final int MAX_DEPTH = 5;
 	static Log log;
+
 	
 	public boolean processInput() throws IOException{
 		boolean gameOver = false;
-		log.writeLog("turn starts");
     	String s=input.readLine();
-    	log.writeLog("read input");
+    	log.writeLog("read input: " + s);
 		List<String> ls = Arrays.asList(s.split(" ", 5));
-		log.writeLog("parsed input");
 		if(ls.size()==2){ 								//if opponent just played
 			updateBoard(ls.get(0), ls.get(1), 2);
-			int moveColumn = alphaBetaSearch(board);
-			updateBoard(Integer.toString(moveColumn), "1", 1);
-			log.writeLog(moveColumn + " 1");
-			System.out.println(moveColumn + " 1");
-			//updateBoard("3", "1", 1);
+			log.writeLog("here is the thing!!!" + ls.get(1));
+			if(ls.get(1).equals("0")) {
+				board.p2DropUsed = true;
+				log.writeLog("p2 drop used");
+			}
+			Move moveColumn = alphaBetaSearch(board);
+			if(moveColumn.type == 0) {
+				board.p1DropUsed = true;
+				log.writeLog("p1 drop used");
+			}
+			updateBoard(moveColumn, 1);
+			board.printBoard();
+			System.out.println(moveColumn.toString());
 		}
 		else if(ls.size()==1){							//if game over?
 			log.writeLog("game over");
 			return true;
-			//System.out.println("4 1");
 		}
 		else if(ls.size()==5){          				//ls contains game info
 			board = new Board(Integer.parseInt(ls.get(0)), Integer.parseInt(ls.get(1)), Integer.parseInt(ls.get(2)), log);
-			if(isFirstPlayer) {							//Make first move
+			if((isPlayerOne && Integer.parseInt(ls.get(3)) == 1) || (!isPlayerOne && Integer.parseInt(ls.get(3)) == 2)) {							//Make first move
 				System.out.println("3 1");				// TODO: WORRY ABOUT BOARD SIZE
 				updateBoard("3", "1", 1);
 			}
 		}
 		else if(ls.size()==4){							//player1: aa player2: bb
 			if(ls.indexOf(playerName) == 1) {
-				isFirstPlayer = true;
+				isPlayerOne = true;
 				log.writeLog("first");
 			} else {
 				log.writeLog("second");
-				isFirstPlayer = false;
+				isPlayerOne = false;
 			}
 		}
 		else {
@@ -61,17 +68,21 @@ public class PlayerAI {
 		return false;
 	}
 	
-	int alphaBetaSearch(Board currentBoard) {
+	Move alphaBetaSearch(Board currentBoard) {
 		log.writeLog("EVALUATING MOVES---------------------------");
 		int v = Integer.MIN_VALUE;
-		int index = 4;
+		Move index;
 		int alpha = Integer.MIN_VALUE;
 		int beta = Integer.MAX_VALUE;
 		int score;
-		for(int i = 0; i < board.width; i++) {
-			if( board.canDropADiscFromTop(i, 1)){
+		ArrayList<Move> currentMoves = new ArrayList<Move>();
+		currentMoves.addAll(currentBoard.getMoves(1));
+		log.writeLog(currentMoves.toString());
+		index = currentMoves.get(0);
+		for(Move i : currentMoves) {
+			if( board.canMakeMove(i, 1)){
 				Board nextMove = new Board(currentBoard);
-				nextMove.dropADiscFromTop(i, 1);
+				nextMove.executeMove(i,1);
 				if( currentBoard.isConnectN() != -1 || currentBoard.isFull()) {
 					score = Eval.eval(currentBoard);
 				}
@@ -92,10 +103,12 @@ public class PlayerAI {
 		}
 		
 		int v = Integer.MIN_VALUE;
-		for(int i = 0; i < board.width; i++) {
-			if( currentBoard.canDropADiscFromTop(i, 1)){
+		ArrayList<Move> currentMoves;
+		currentMoves = board.getMoves(1);
+		for(Move i : currentMoves) {
+			if( currentBoard.canMakeMove(i, 1)){
 				Board nextMove = new Board(currentBoard);
-				nextMove.dropADiscFromTop(i, 1);
+				nextMove.executeMove(i, 1);
 				int score = min(nextMove, currentDepth+1, alpha, beta);
 				if( v < score) v = score;
 				if( v >= beta) return v;
@@ -111,10 +124,12 @@ public class PlayerAI {
 		}
 		
 		int v = Integer.MAX_VALUE;
-		for(int i = 0; i < board.width; i++) {
-			if( currentBoard.canDropADiscFromTop(i, 1)){
+		ArrayList<Move> currentMoves;
+		currentMoves = board.getMoves(2);
+		for(Move i : currentMoves) {
+			if( currentBoard.canMakeMove(i, 2)){
 				Board nextMove = new Board(currentBoard);
-				nextMove.dropADiscFromTop(i, 2);
+				nextMove.executeMove(i, 2);
 				int score = max(nextMove, currentDepth+1, alpha, beta);
 				if( v > score) v = score;
 				if( v <= alpha) return v;
@@ -129,6 +144,14 @@ public class PlayerAI {
 			board.dropADiscFromTop(Integer.parseInt(col), player);
 		} else  if(Integer.parseInt(action) == 0) {
 			board.removeADiscFromBottom(Integer.parseInt(col));
+		}
+	}
+	
+	void updateBoard(Move move, int player) {
+		if(move.type == 1)	{
+			board.dropADiscFromTop(move.column, player);
+		} else  if(move.type == 0) {
+			board.removeADiscFromBottom(move.column);
 		}
 	}
 	

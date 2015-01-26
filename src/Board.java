@@ -3,6 +3,7 @@
  */
 
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 /**
@@ -22,6 +23,8 @@ public class Board {
 	int NOCONNECTION=-1;
 	int TIE=0;
 	Log log;
+	boolean p1DropUsed;
+	boolean p2DropUsed;
 	
 	 Board(int height, int width, int N, Log log){
 		this.width=width;
@@ -36,21 +39,23 @@ public class Board {
 //			numOfDiscsInColumn[j]=0;
 		this.N=N;
 		this.log=log;
+		this.p1DropUsed = false;
+		this.p2DropUsed = false;
 	 }
 	 
 	 Board(int height, int width, int N){
-			this.width=width;
-			this.height=height;
-			board =new short[height][width];
-			for(int i=0;i<height;i++)
-				for(int j=0;j<width;j++){
-					board[i][j]=(short)this.emptyCell;
-				}
-			numOfDiscsInColumn=new int[this.width];
+		this.width=width;
+		this.height=height;
+		board =new short[height][width];
+		for(int i=0;i<height;i++)
+			for(int j=0;j<width;j++){
+				board[i][j]=(short)this.emptyCell;
+			}
+		numOfDiscsInColumn=new int[this.width];
 //			for(int j=0;j<width;j++)
 //				numOfDiscsInColumn[j]=0;
-			this.N=N;
-		 }
+		this.N=N;
+	 }
 	 
 	 Board( Board another) {
 		this.width = another.width;
@@ -63,7 +68,51 @@ public class Board {
 		this.numOfDiscsInColumn = Arrays.copyOf(another.numOfDiscsInColumn, another.numOfDiscsInColumn.length);
 		this.N = another.N;
 		this.log = another.log;
+		this.p1DropUsed = another.p1DropUsed;
+		this.p2DropUsed = another.p2DropUsed;
+
 	 }
+	 
+	public boolean canMakeMove(Move i, int player) {
+		// TODO Auto-generated method stub
+		if(i.type == 1) {
+			return this.canDropADiscFromTop(i.column, player);
+		} else if(i.type == 0){
+			return this.canRemoveADiscFromBottom(i.column, player);
+		}
+		log.writeLog("illegal move");
+		return false;
+	}
+
+	public void executeMove(Move i, int player) {
+		if(i.type == 1) {
+			this.dropADiscFromTop(i.column, player);
+		} 
+		if(i.type == 0){
+			this.removeADiscFromBottom(i.column);
+			if(player == 1) {
+				this.p1DropUsed = true;
+			}
+			if(player == 2) {
+				this.p2DropUsed = true;
+			}
+		}
+	}
+
+	public ArrayList<Move> getMoves(int player) {
+		ArrayList<Move> moves = new ArrayList<Move>();
+		for(int i = 0; i < this.width; i++){
+			Move k = new Move(i, 1);
+			Move j = new Move(i, 0);
+			if(this.canMakeMove(k, player)) {
+				moves.add(k);
+			}
+			if(this.canMakeMove(j, player)) {
+				moves.add(j);
+			}
+		}
+		return moves;
+	}
 	 
 	 public void printBoard(){
 		 log.writeLog("Board: ");
@@ -89,13 +138,21 @@ public class Board {
 		 if(col<0 || col>=this.width) {
 			 log.writeLog("Illegal column!");
 			 return false;
-			 }
+		 }
 		 else if(board[height-1][col]!=currentPlayer){
-			 log.writeLog("You don't have a checker in column "+col+" to pop out!");
+			 //log.writeLog("You don't have a checker in column "+col+" to pop out!");
 			 return false;
 		 }
 		 else 
-			 return true;
+		 {
+			 if(currentPlayer == 1 && !this.p1DropUsed) {
+				 return true;
+			 }
+			 if(currentPlayer == 2 && !this.p2DropUsed) {
+				 return true;
+			 }
+			 return false;
+		 }
 	 }
 	 
 	 
@@ -702,4 +759,5 @@ public class Board {
 //       b.test3();
  //        b.test5();
 	 }
+
 }
