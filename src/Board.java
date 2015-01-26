@@ -10,6 +10,10 @@ import java.util.Arrays;
  * @author lzhu
  *
  */
+/**
+ * @author Crozic
+ *
+ */
 public class Board {
 	
 	int width;
@@ -73,6 +77,12 @@ public class Board {
 
 	 }
 	 
+	/**
+	 * Checks a certain Move to see if it is legal
+	 * @param i The Move to be checked for legality
+	 * @param player The player making the move
+	 * @return True if the move is legal, false if it is not
+	 */
 	public boolean canMakeMove(Move i, int player) {
 		// TODO Auto-generated method stub
 		if(i.type == 1) {
@@ -84,6 +94,11 @@ public class Board {
 		return false;
 	}
 
+	/**
+	 * Executes a certain move on this board
+	 * @param i The move to be executed
+	 * @param player The player executing the move
+	 */
 	public void executeMove(Move i, int player) {
 		if(i.type == 1) {
 			this.dropADiscFromTop(i.column, player);
@@ -99,6 +114,11 @@ public class Board {
 		}
 	}
 
+	/**
+	 * Gets all the legal moves for a player.
+	 * @param player The player for whom the moves must be collected
+	 * @return An ArrayList<Move> containing all legal moves for that player
+	 */
 	public ArrayList<Move> getMoves(int player) {
 		ArrayList<Move> moves = new ArrayList<Move>();
 		for(int i = 0; i < this.width; i++){
@@ -114,7 +134,10 @@ public class Board {
 		return moves;
 	}
 	 
-	 public void printBoard(){
+	 /**
+	 * Prints the current state of the board to the log.
+	 */
+	public void printBoard(){
 		 log.writeLog("Board: ");
 		 for(int i=0;i<height;i++){
 				for(int j=0;j<width;j++){
@@ -124,7 +147,10 @@ public class Board {
 		 }
 	 }
 	 
-	 public void printBoard2(){
+	 /**
+	 * Prints the current state of the board to stdout for testing
+	 */
+	public void printBoard2(){
 		 System.out.println("Board: ");
 		 for(int i=0;i<height;i++){
 				for(int j=0;j<width;j++){
@@ -134,7 +160,14 @@ public class Board {
 		 }
 	 }
 	 
-	 public boolean canRemoveADiscFromBottom(int col, int currentPlayer){
+	
+	 /**
+	  * Checks if a given player can remove a disk from the bottom of a column
+	 * @param col Column to check for removal
+	 * @param currentPlayer player making the removal
+	 * @return return true if the player can, false if not
+	 */
+	public boolean canRemoveADiscFromBottom(int col, int currentPlayer){
 		 if(col<0 || col>=this.width) {
 			 log.writeLog("Illegal column!");
 			 return false;
@@ -157,7 +190,11 @@ public class Board {
 	 
 	 
 	 
-	 public void removeADiscFromBottom(int col){
+	 /**
+	  * Remove a disk from the bottom of a column
+	 * @param col Column from which the disk will be removed
+	 */
+	public void removeADiscFromBottom(int col){
 		 int i;
 		 for(i=height-1;i>height-this.numOfDiscsInColumn[col];i--){
 			 board[i][col]=board[i-1][col];
@@ -166,8 +203,13 @@ public class Board {
 		 this.numOfDiscsInColumn[col]--;
 	 }
 	 
-	 
-	 public boolean canDropADiscFromTop(int col, int currentPlayer){
+	 /**
+	  * Checks if the player can drop a disk in the given column
+	 * @param col Column to drop the disk in
+	 * @param currentPlayer The player dropping the disk
+	 * @return True if the player can, false if not
+	 */
+	public boolean canDropADiscFromTop(int col, int currentPlayer){
 		 if(col<0 || col>=this.width) {
 			 log.writeLog("Illegal column!");
 			 return false;
@@ -180,7 +222,12 @@ public class Board {
 			 return true;
 	 }
 	 
-	 public void dropADiscFromTop(int col, int currentplayer){
+	 /**
+	  * Drops a disk from the top of a column
+	 * @param col Column to drop disk in
+	 * @param currentplayer Player dropping the disk
+	 */
+	public void dropADiscFromTop(int col, int currentplayer){
 		 int firstEmptyCellRow=this.height-this.numOfDiscsInColumn[col]-1;
 		 if(firstEmptyCellRow == -1){
 			 printBoard();

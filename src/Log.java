@@ -13,6 +13,10 @@ public class Log {
 		fileName = "Log.txt";
 	}
 	
+    /**
+     * Write a string to log.txt
+     * @param entry The String to be written to the log
+     */
     public void writeLog( String entry) {
     	if(logging) { 	
 	        try {
@@ -29,6 +33,10 @@ public class Log {
     	}
     }
 
+	/**
+	 * Writes to log.txt without a new line at the end.
+	 * @param entry The String to be written to the log without a new line
+	 */
 	public void writeLogNoLine(String entry) {
 		if(logging) {
 	        try {
